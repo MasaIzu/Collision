@@ -161,7 +161,7 @@ void GameScene::Update()
 	objSphere->Update();
 
 	//全ての衝突をチェック
-	collisionManager->CheckAllCollisions();
+	collisionManager->CheckAllCollisions(objFighter->GetMatWorld());
 
 
 }

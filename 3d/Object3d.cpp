@@ -281,7 +281,7 @@ void Object3d::Update()
 
 	// 当たり判定更新
 	if (collider) {
-		collider->Update();
+		collider->Update(matWorld);
 	}
 }
 
@@ -350,13 +350,12 @@ void Object3d::UpdateWorldMatrix()
 
 void Object3d::SetCollider(BaseCollider* collider)
 {
-	collider->SetObject(this);
 	this->collider = collider;
 	// コリジョンマネージャに追加
 	CollisionManager::GetInstance()->AddCollider(collider);
 
 	UpdateWorldMatrix();
-	collider->Update();
+	collider->Update(matWorld);
 }
 
 XMFLOAT3 Object3d::GetWorldPosition()

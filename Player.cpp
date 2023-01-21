@@ -97,7 +97,7 @@ void Player::Update()
 
 	// ワールド行列更新
 	UpdateWorldMatrix();
-	collider->Update();
+	collider->Update(matWorld);
 
 	SphereCollider* sphereCollider = dynamic_cast<SphereCollider*>(collider);
 	assert(sphereCollider);
@@ -136,14 +136,14 @@ void Player::Update()
 	PlayerQueryCallback callback(sphereCollider);
 
 	// 球と地形の交差を全検索
-	CollisionManager::GetInstance()->QuerySphere(*sphereCollider, &callback, COLLISION_ATTR_LANDSHAPE);
+	CollisionManager::GetInstance()->QuerySphere(*sphereCollider, &callback, COLLISION_ATTR_LANDSHAPE,&matWorld);
 	// 交差による排斥分動かす
 	position.x += callback.move.m128_f32[0];
 	position.y += callback.move.m128_f32[1];
 	position.z += callback.move.m128_f32[2];
 	// ワールド行列更新
 	UpdateWorldMatrix();
-	collider->Update();
+	collider->Update(matWorld);
 
 	//地面メッシュコライダー
 	{
@@ -159,7 +159,7 @@ void Player::Update()
 			// スムーズに坂を下る為の吸着距離
 			const float adsDistance = 0.2f;
 			// 接地を維持
-			if (CollisionManager::GetInstance()->Raycast(Groundray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance)) {
+			if (CollisionManager::GetInstance()->Raycast(Groundray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f + adsDistance,&matWorld)) {
 				onGround = true;
 				position.y -= (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
 			}
@@ -171,7 +171,7 @@ void Player::Update()
 		}
 		// 落下状態
 		else if (fallV.m128_f32[1] <= 0.0f) {
-			if (CollisionManager::GetInstance()->Raycast(Groundray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f)) {
+			if (CollisionManager::GetInstance()->Raycast(Groundray, COLLISION_ATTR_LANDSHAPE, &raycastHit, sphereCollider->GetRadius() * 2.0f, &matWorld)) {
 				// 着地
 				onGround = true;
 				position.y -= (raycastHit.distance - sphereCollider->GetRadius() * 2.0f);
@@ -190,7 +190,7 @@ void Player::Update()
 		const float adsDistance = 0.2f;
 
 		// 接地を維持
-		if (CollisionManager::GetInstance()->Raycast(wall, COLLISION_ATTR_LANDSHAPE, &wallRaycastHit, sphereCollider->GetRadius())) {
+		if (CollisionManager::GetInstance()->Raycast(wall, COLLISION_ATTR_LANDSHAPE, &wallRaycastHit, sphereCollider->GetRadius(), &matWorld)) {
 			position.z += (wallRaycastHit.distance - sphereCollider->GetRadius());
 		}
 
@@ -207,7 +207,7 @@ void Player::Update()
 		const float adsDistance = 0.2f;
 
 		// 接地を維持
-		if (CollisionManager::GetInstance()->Raycast(wall, COLLISION_ATTR_LANDSHAPE, &wallRaycastHit, sphereCollider->GetRadius())) {
+		if (CollisionManager::GetInstance()->Raycast(wall, COLLISION_ATTR_LANDSHAPE, &wallRaycastHit, sphereCollider->GetRadius() ,&matWorld)) {
 			position.x += (wallRaycastHit.distance - sphereCollider->GetRadius());
 		}
 
@@ -224,7 +224,7 @@ void Player::Update()
 		const float adsDistance = 0.2f;
 
 		// 接地を維持
-		if (CollisionManager::GetInstance()->Raycast(wall, COLLISION_ATTR_LANDSHAPE, &wallRaycastHit, sphereCollider->GetRadius())) {
+		if (CollisionManager::GetInstance()->Raycast(wall, COLLISION_ATTR_LANDSHAPE, &wallRaycastHit, sphereCollider->GetRadius(), &matWorld)) {
 			position.x -= (wallRaycastHit.distance - sphereCollider->GetRadius());
 		}
 

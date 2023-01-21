@@ -3,10 +3,10 @@
 
 using namespace DirectX;
 
-void SphereCollider::Update()
+void SphereCollider::Update(DirectX::XMMATRIX worldPos)
 {
 	// ワールド行列から座標を抽出
-	const XMMATRIX& matWorld = object3d->GetMatWorld();
+	const XMMATRIX& matWorld = worldPos;
 
 	// 球のメンバ変数を更新
 	Sphere::center = matWorld.r[3] + offset;

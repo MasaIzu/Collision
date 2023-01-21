@@ -25,7 +25,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update() override;
+	void Update(DirectX::XMMATRIX worldPos) override;
 
 	inline void SetRadius(float radius) { this->radius = radius; }
 

@@ -24,15 +24,15 @@ public://メンバ関数
 		colliders.remove(collide);
 	}
 
-	void CheckAllCollisions();
+	void CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos);
 
-	bool Raycast(const Ray& ray, RaycastHit* hitInfo = nullptr, float maxDistance = D3D12_FLOAT32_MAX);
+	bool Raycast(const Ray& ray, RaycastHit* hitInfo = nullptr, float maxDistance = D3D12_FLOAT32_MAX, DirectX::XMMATRIX* MatWorldPos = nullptr);
 
 
 	//レイキャストオーバーロード
-	bool Raycast(const Ray& ray, unsigned short attribute, RaycastHit* hitInfo = nullptr, float maxDistance = D3D12_FLOAT32_MAX);
+	bool Raycast(const Ray& ray, unsigned short attribute, RaycastHit* hitInfo = nullptr, float maxDistance = D3D12_FLOAT32_MAX, DirectX::XMMATRIX* MatWorldPos= nullptr);
 
-	void QuerySphere(const Sphere& sphere, QueryCallback* callback, unsigned short attribute = (unsigned short)0xffffffff);
+	void QuerySphere(const Sphere& sphere, QueryCallback* callback, unsigned short attribute = (unsigned short)0xffffffff, DirectX::XMMATRIX* worldPos = nullptr);
 
 private:
 	CollisionManager() = default;
