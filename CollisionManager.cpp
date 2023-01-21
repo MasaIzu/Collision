@@ -11,7 +11,7 @@ CollisionManager* CollisionManager::GetInstance()
 	return &instance;
 }
 
-void CollisionManager::CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos)
+void CollisionManager::CheckAllCollisions()
 {
 	std::forward_list<BaseCollider*>::iterator itA;
 	std::forward_list<BaseCollider*>::iterator itB;
@@ -32,7 +32,8 @@ void CollisionManager::CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos)
 				Sphere* SphereB = dynamic_cast<Sphere*>(colB);
 				DirectX::XMVECTOR inter;
 				if (Collision::CheckSphere2Sphere(*SphereA, *SphereB, &inter)) {
-					
+					colA->OnCollision(CollisionInfo(colB->GetObject3d(), colB, inter));
+					colB->OnCollision(CollisionInfo(colA->GetObject3d(), colA, inter));
 				}
 			}
 			else if (colA->GetShapeType() == COLLISIONSHAPE_MESH &&
@@ -40,8 +41,9 @@ void CollisionManager::CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos)
 				MeshCollider* meshCollider = dynamic_cast<MeshCollider*>(colA);
 				Sphere* sphere = dynamic_cast<Sphere*>(colB);
 				DirectX::XMVECTOR inter;
-				if (meshCollider->CheckCollisionSphere(*sphere, &inter, nullptr, &PlayerMatWorldPos)) {
-					
+				if (meshCollider->CheckCollisionSphere(*sphere, &inter)) {
+					colA->OnCollision(CollisionInfo(colB->GetObject3d(), colB, inter));
+					colB->OnCollision(CollisionInfo(colA->GetObject3d(), colA, inter));
 				}
 			}
 			else if (colA->GetShapeType() == COLLISIONSHAPE_SPHERE &&
@@ -49,20 +51,21 @@ void CollisionManager::CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos)
 				MeshCollider* meshCollider = dynamic_cast<MeshCollider*>(colB);
 				Sphere* sphere = dynamic_cast<Sphere*>(colA);
 				DirectX::XMVECTOR inter;
-				if (meshCollider->CheckCollisionSphere(*sphere, &inter, nullptr, &PlayerMatWorldPos)) {
-					
+				if (meshCollider->CheckCollisionSphere(*sphere, &inter)) {
+					colA->OnCollision(CollisionInfo(colB->GetObject3d(), colB, inter));
+					colB->OnCollision(CollisionInfo(colA->GetObject3d(), colA, inter));
 				}
 			}
 		}
 	}
 }
 
-bool CollisionManager::Raycast(const Ray& ray, RaycastHit* hitInfo, float maxDistance, DirectX::XMMATRIX* MatWorldPos)
+bool CollisionManager::Raycast(const Ray& ray, RaycastHit* hitInfo, float maxDistance)
 {
-	return Raycast(ray, 0xffff, hitInfo, maxDistance, MatWorldPos);
+	return Raycast(ray, 0xffff, hitInfo, maxDistance);
 }
 
-bool CollisionManager::Raycast(const Ray& ray, unsigned short attribute, RaycastHit* hitInfo, float maxDistance,DirectX::XMMATRIX* MatWorldPos)
+bool CollisionManager::Raycast(const Ray& ray, unsigned short attribute, RaycastHit* hitInfo, float maxDistance)
 {
 	bool result = false;
 	std::forward_list<BaseCollider*>::iterator it;
@@ -99,7 +102,7 @@ bool CollisionManager::Raycast(const Ray& ray, unsigned short attribute, Raycast
 
 			float tempDistance;
 			DirectX::XMVECTOR tempInter;
-			if (!meshCollider->CheckCollisionRay(ray, &tempDistance, &tempInter, MatWorldPos)) continue;
+			if (!meshCollider->CheckCollisionRay(ray, &tempDistance, &tempInter)) continue;
 			if (tempDistance >= distance) continue;
 
 			result = true;
@@ -113,12 +116,13 @@ bool CollisionManager::Raycast(const Ray& ray, unsigned short attribute, Raycast
 		hitInfo->distance = distance;
 		hitInfo->inter = inter;
 		hitInfo->collider = *it_hit;
+		hitInfo->object = hitInfo->collider->GetObject3d();
 	}
 
 	return result;
 }
 
-void CollisionManager::QuerySphere(const Sphere& sphere, QueryCallback* callback, unsigned short attribute,XMMATRIX* worldPos)
+void CollisionManager::QuerySphere(const Sphere& sphere, QueryCallback* callback, unsigned short attribute)
 {
 	assert(callback);
 
@@ -145,6 +149,7 @@ void CollisionManager::QuerySphere(const Sphere& sphere, QueryCallback* callback
 			// 交差情報をセット
 			QueryHit info;
 			info.collider = col;
+			info.object = col->GetObject3d();
 			info.inter = tempInter;
 			info.reject = tempReject;
 
@@ -160,11 +165,12 @@ void CollisionManager::QuerySphere(const Sphere& sphere, QueryCallback* callback
 
 			XMVECTOR tempInter;
 			XMVECTOR tempReject;
-			if (!meshCollider->CheckCollisionSphere(sphere, &tempInter, &tempReject,worldPos)) continue;
+			if (!meshCollider->CheckCollisionSphere(sphere, &tempInter, &tempReject)) continue;
 
 			// 交差情報をセット
 			QueryHit info;
 			info.collider = col;
+			info.object = col->GetObject3d();
 			info.inter = tempInter;
 			info.reject = tempReject;
 

@@ -51,12 +51,12 @@ void MeshCollider::ConstructTriangles(Model* model)
 	}
 }
 
-void MeshCollider::Update(DirectX::XMMATRIX worldPos)
+void MeshCollider::Update()
 {
-	invMatWorld = XMMatrixInverse(nullptr, worldPos);
+	invMatWorld = XMMatrixInverse(nullptr, GetObject3d()->GetMatWorld());
 }
 
-bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR* inter,DirectX::XMVECTOR* reject, DirectX::XMMATRIX* worldPos)
+bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR* inter,DirectX::XMVECTOR* reject)
 {
 	// オブジェクトのローカル座標系での球を得る（半径はXスケールを参照)
 	Sphere localSphere;
@@ -70,12 +70,12 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR*
 
 		if (Collision::CheckSphere2Triangle(localSphere, triangle, inter,reject)) {
 			if (inter) {
-				const XMMATRIX& matWorld = *worldPos;
+				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
 
 				*inter = XMVector3Transform(*inter, matWorld);
 			}
 			if (reject) {
-				const XMMATRIX& matWorld = *worldPos;
+				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
 				//ワールド座標系で排斥ベクトルに変換
 				*reject = XMVector3TransformNormal(*reject, matWorld);
 			}
@@ -86,7 +86,7 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR*
 	return false;
 }
 
-bool MeshCollider::CheckCollisionRay(const Ray& ray, float* distance, DirectX::XMVECTOR* inter, DirectX::XMMATRIX* worldPos)
+bool MeshCollider::CheckCollisionRay(const Ray& ray, float* distance, DirectX::XMVECTOR* inter)
 {
 	// オブジェクトのローカル座標系でのレイを得る
 	Ray localRay;
@@ -102,7 +102,7 @@ bool MeshCollider::CheckCollisionRay(const Ray& ray, float* distance, DirectX::X
 
 		if (Collision::CheckRay2Triangle(localRay, triangle, nullptr, &tempInter)) {
 
-			const XMMATRIX& matWorld = *worldPos;
+			const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
 
 			tempInter = XMVector3Transform(tempInter, matWorld);
 
