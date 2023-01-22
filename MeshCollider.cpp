@@ -53,7 +53,7 @@ void MeshCollider::ConstructTriangles(Model* model)
 
 void MeshCollider::Update(DirectX::XMMATRIX worldPos)
 {
-	invMatWorld = XMMatrixInverse(nullptr, worldPos);
+	invMatWorld = XMMatrixInverse(nullptr, XMMatrixIdentity());
 }
 
 bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR* inter,DirectX::XMVECTOR* reject)

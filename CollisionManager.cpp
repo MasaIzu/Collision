@@ -40,7 +40,7 @@ void CollisionManager::CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos)
 				MeshCollider* meshCollider = dynamic_cast<MeshCollider*>(colA);
 				Sphere* sphere = dynamic_cast<Sphere*>(colB);
 				DirectX::XMVECTOR inter;
-				if (meshCollider->CheckCollisionSphere(*sphere, &inter, nullptr, &PlayerMatWorldPos)) {
+				if (meshCollider->CheckCollisionSphere(*sphere, &inter, nullptr)) {
 					
 				}
 			}
@@ -49,7 +49,7 @@ void CollisionManager::CheckAllCollisions(DirectX::XMMATRIX PlayerMatWorldPos)
 				MeshCollider* meshCollider = dynamic_cast<MeshCollider*>(colB);
 				Sphere* sphere = dynamic_cast<Sphere*>(colA);
 				DirectX::XMVECTOR inter;
-				if (meshCollider->CheckCollisionSphere(*sphere, &inter, nullptr, &PlayerMatWorldPos)) {
+				if (meshCollider->CheckCollisionSphere(*sphere, &inter, nullptr)) {
 					
 				}
 			}
@@ -108,7 +108,7 @@ bool CollisionManager::Raycast(const Ray& ray, unsigned short attribute, Raycast
 			/// <param name="maxDistance"></param>
 			/// <param name="MatWorldPos"></param>
 			/// <returns></returns>
-			if (!meshCollider->CheckCollisionRay(ray, &tempDistance, &tempInter, MatWorldPos)) continue;
+			if (!meshCollider->CheckCollisionRay(ray, &tempDistance, &tempInter)) continue;
 			if (tempDistance >= distance) continue;
 
 			result = true;
@@ -169,7 +169,7 @@ void CollisionManager::QuerySphere(const Sphere& sphere, QueryCallback* callback
 
 			XMVECTOR tempInter;
 			XMVECTOR tempReject;
-			if (!meshCollider->CheckCollisionSphere(sphere, &tempInter, &tempReject,worldPos)) continue;
+			if (!meshCollider->CheckCollisionSphere(sphere, &tempInter, &tempReject)) continue;
 
 			// Œğ·î•ñ‚ğƒZƒbƒg
 			QueryHit info;
