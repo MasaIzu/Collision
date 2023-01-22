@@ -53,7 +53,7 @@ void MeshCollider::ConstructTriangles(Model* model)
 
 void MeshCollider::Update()
 {
-	invMatWorld = XMMatrixInverse(nullptr, GetObject3d()->GetMatWorld());
+	invMatWorld = XMMatrixInverse(nullptr, XMMatrixIdentity());
 }
 
 bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR* inter,DirectX::XMVECTOR* reject)
@@ -70,12 +70,12 @@ bool MeshCollider::CheckCollisionSphere(const Sphere& sphere, DirectX::XMVECTOR*
 
 		if (Collision::CheckSphere2Triangle(localSphere, triangle, inter,reject)) {
 			if (inter) {
-				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+				const XMMATRIX& matWorld = XMMatrixIdentity();
 
 				*inter = XMVector3Transform(*inter, matWorld);
 			}
 			if (reject) {
-				const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+				const XMMATRIX& matWorld = XMMatrixIdentity();
 				//ワールド座標系で排斥ベクトルに変換
 				*reject = XMVector3TransformNormal(*reject, matWorld);
 			}
