@@ -102,7 +102,7 @@ bool MeshCollider::CheckCollisionRay(const Ray& ray, float* distance, DirectX::X
 
 		if (Collision::CheckRay2Triangle(localRay, triangle, nullptr, &tempInter)) {
 
-			const XMMATRIX& matWorld = GetObject3d()->GetMatWorld();
+			const XMMATRIX& matWorld = XMMatrixIdentity();
 
 			tempInter = XMVector3Transform(tempInter, matWorld);
 
