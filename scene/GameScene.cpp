@@ -92,7 +92,6 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objFighter = Player::Create(modelFighter);
 	objSphere = Object3d::Create(modelSphere);
 
-	objFighter->SetPosition({ 0,0,0 });
 
 	objSphere->SetPosition({ -10, 1, 5 });
 	objSphere->SetCollider(new SphereCollider);
