@@ -92,8 +92,9 @@ void GameScene::Initialize(DirectXCommon* dxCommon, Input* input, Audio * audio)
 	objFighter = Player::Create(modelFighter);
 	objSphere = Object3d::Create(modelSphere);
 
-	objSphere->SetPosition({ -10, 1, 5 });
+	objFighter->SetPosition({ 0,1,0 });
 
+	objSphere->SetPosition({ -10, 1, 5 });
 	objSphere->SetCollider(new SphereCollider);
 
 	// カメラ注視点をセット
